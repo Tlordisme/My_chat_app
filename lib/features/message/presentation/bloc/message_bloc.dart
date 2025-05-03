@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:chat_app/core/socket_service.dart';
 import 'package:chat_app/features/message/domain/entities/message_entity.dart';
 import 'package:chat_app/features/message/domain/usecases/fetch_message_usecase.dart';

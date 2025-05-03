@@ -10,7 +10,6 @@ class ConversationRemoteSource {
 
   Future<List<ConversationModel>> fetchConversations() async {
     String token = await _storage.read(key: 'token') ?? '';
-    // String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImQ4ZjUzMjA1LWU3ZTktNGM5Yy05ZWI0LWY4MDliZThlMjYzYyIsImlhdCI6MTc0NDgyNDM2NiwiZXhwIjoxNzQ0ODI3OTY2fQ.06OBEpKRw2RiFOf7Mwg15FqYft4ZmOd0kuluG74gA2U";
     final response = await http.get(
       Uri.parse('$baseUrl/conversations'),
       headers: {'Authorization': 'Bearer $token'},
@@ -25,3 +24,4 @@ class ConversationRemoteSource {
     }
   }
 }
+

@@ -1,13 +1,23 @@
 class ConversationEntity {
   final String id;
-  final String participantName;
+  final bool isGroup;
+  final String? groupName; 
+  final List<String> participants; 
   final String lastMessage;
-  final DateTime lastMessageTime;
+  final DateTime? lastMessageTime;
 
   ConversationEntity({
     required this.id,
-    required this.participantName,
+    required this.isGroup,
+    this.groupName,
+    required this.participants,
     required this.lastMessage,
     required this.lastMessageTime,
   });
+
+
+  String get displayName {
+    if (isGroup) return groupName ?? 'Nhóm không tên';
+    return participants.first; 
+  }
 }

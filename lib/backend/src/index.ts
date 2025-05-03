@@ -7,6 +7,7 @@ import messageRoutes from "./routes/messageRoutes";
 import http from "http";
 import { Server } from "socket.io";
 import { saveMessage } from "./controllers/messageController";
+import contactsRoutes from "./routes/contactsRoutes";
 
 const app = express();
 const cors = require("cors");
@@ -24,6 +25,7 @@ const io = new Server(server, {
 app.use("/auth", authRoutes);
 app.use("/conversations", conversationRoutes);
 app.use("/messages", messageRoutes);
+app.use("/contacts", contactsRoutes );
 
 io.on("connection", (socket) => {
   console.log("A user connected:", socket.id);

@@ -5,6 +5,7 @@ import 'package:chat_app/features/conversation/presentation/bloc/conversation_st
 import 'package:chat_app/features/message/presentation/pages/message_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 
 class ConversationPage extends StatefulWidget {
   const ConversationPage({super.key});
@@ -14,6 +15,8 @@ class ConversationPage extends StatefulWidget {
 }
 
 class _ConversationPageState extends State<ConversationPage> {
+  
+  
   @override
   void initState() {
     // TODO: implement ==
@@ -93,15 +96,15 @@ class _ConversationPageState extends State<ConversationPage> {
                                 builder:
                                     (context) => MessagePage(
                                       conversationId: conversation.id,
-                                      mate: conversation.participantName,
+                                      mate: conversation.displayName,
                                     ),
                               ),
                             );
                           },
                           child: _buildMessageTile(
-                            conversation.participantName,
+                            conversation.displayName,
                             conversation.lastMessage,
-                            conversation.lastMessageTime.toString(),
+                            DateFormat('HH:mm dd/MM').format(conversation.lastMessageTime!),
                           ),
                         );
                       },
@@ -115,6 +118,13 @@ class _ConversationPageState extends State<ConversationPage> {
             ),
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // Navigator.push(context, MaterialPageRoute(builder: (context) => ContactPage()));
+        },
+        backgroundColor: DefaultColors.buttonColor,
+        child: Icon(Icons.contacts),
       ),
     );
   }
