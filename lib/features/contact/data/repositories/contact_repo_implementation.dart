@@ -6,13 +6,12 @@ class ContactRepoImplementation extends ContactRepository {
   final ContactRemoteSource contactRemoteSource;
   ContactRepoImplementation({required this.contactRemoteSource});
   @override
-  Future<void> addContact({required String email}) async{
+  Future<void> addContact({required String email}) async {
     await contactRemoteSource.addContact(email: email);
   }
 
   @override
-  Future<List<ContactEntity>> fetchContacts() {
-    // TODO: implement fetchContacts
-    throw UnimplementedError();
+  Future<List<ContactEntity>> fetchContacts() async {
+    return await contactRemoteSource.fetchContacts();
   }
 }
