@@ -1,4 +1,5 @@
 import 'package:chat_app/core/theme.dart';
+import 'package:chat_app/features/contact/presentation/pages/contact_page.dart';
 import 'package:chat_app/features/conversation/presentation/bloc/conversation_bloc.dart';
 import 'package:chat_app/features/conversation/presentation/bloc/conversation_event.dart';
 import 'package:chat_app/features/conversation/presentation/bloc/conversation_state.dart';
@@ -15,8 +16,6 @@ class ConversationPage extends StatefulWidget {
 }
 
 class _ConversationPageState extends State<ConversationPage> {
-  
-  
   @override
   void initState() {
     // TODO: implement ==
@@ -104,7 +103,9 @@ class _ConversationPageState extends State<ConversationPage> {
                           child: _buildMessageTile(
                             conversation.displayName,
                             conversation.lastMessage,
-                            DateFormat('HH:mm dd/MM').format(conversation.lastMessageTime!),
+                            DateFormat(
+                              'HH:mm dd/MM',
+                            ).format(conversation.lastMessageTime!),
                           ),
                         );
                       },
@@ -121,7 +122,10 @@ class _ConversationPageState extends State<ConversationPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Navigator.push(context, MaterialPageRoute(builder: (context) => ContactPage()));
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => ContactPage()),
+          );
         },
         backgroundColor: DefaultColors.buttonColor,
         child: Icon(Icons.contacts),

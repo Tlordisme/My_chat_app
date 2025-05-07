@@ -14,6 +14,7 @@ import 'package:chat_app/features/contact/domain/usecases/fetch_contacts_usecase
 import 'package:chat_app/features/contact/presentation/bloc/contact_bloc.dart';
 import 'package:chat_app/features/conversation/data/datasource/conversation_remote_source.dart';
 import 'package:chat_app/features/conversation/data/repositories/conversation_repo_implementation.dart';
+import 'package:chat_app/features/conversation/domain/usecases/check_create_conversation_usecase.dart';
 import 'package:chat_app/features/conversation/domain/usecases/fetch_conversations_usecase.dart';
 import 'package:chat_app/features/conversation/presentation/bloc/conversation_bloc.dart';
 import 'package:chat_app/features/conversation/presentation/pages/conversation_page.dart';
@@ -95,7 +96,7 @@ class MyApp extends StatelessWidget {
               (_) => ContactBloc(
                 fetchContactsUsecase: FetchContactsUsecase(contactRepository: contactRepository), 
                 addContactUsecase: AddContactUsecase(contactRepository: contactRepository),
-                
+                checkCreateConversationUsecase: CheckCreateConversationUsecase(conversationRepository: conversationRepository),
               ),
         ),
       ],

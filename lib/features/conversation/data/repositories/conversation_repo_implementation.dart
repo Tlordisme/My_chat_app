@@ -12,4 +12,10 @@ class ConversationRepoImplementation extends ConversationRepository {
     // TODO: implement fetchConversations
     return await conversationRemoteSource.fetchConversations();
   }
+  
+  @override
+  Future<String> CheckOrCreateConversation({required String contactId}) async {
+    // TODO: implement CheckOrCreateConversation
+    return await conversationRemoteSource.checkOrCreateConversation(contactId: contactId);
+  }
 }

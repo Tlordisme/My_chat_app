@@ -51,12 +51,14 @@ export const addContact = async (req: Request, res: Response): Promise<any> => {
             return res.status(404).json({ error: "Contact not found" });
         }
 
+        const contactId = contactExist.rows[0].id;
+
         // Thực hiện thêm contact vào bảng contacts
         const result = await pool.query(
             `INSERT INTO contacts (user_id, contact_id) 
              VALUES ($1, $2)
              ON CONFLICT DO NOTHING;`,
-            [userId, contactEmail]
+            [userId, contactId]
         );
 
         // Kiểm tra xem có thêm thành công không

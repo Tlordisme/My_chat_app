@@ -5,7 +5,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
 class ContactRemoteSource {
-  final String baseUrl = 'http://192.168.1.13:8000';
+  final String baseUrl = 'http://192.168.0.3:8000';
   final _storage = FlutterSecureStorage();
 
   Future<List<ContactModel>> fetchContacts() async {
@@ -27,7 +27,10 @@ class ContactRemoteSource {
     final response = await http.post(
       Uri.parse('$baseUrl/contacts'),
       body: jsonEncode({'contactEmail': email}),
-      headers: {'Authorization': 'Beared $token'},
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Beared $token',
+      },
     );
     if (response.statusCode != 201) {
       throw Exception('Failed to add contact');
