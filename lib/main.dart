@@ -21,6 +21,8 @@ import 'package:chat_app/features/conversation/presentation/pages/conversation_p
 import 'package:chat_app/features/message/data/datasource/message_remote_source.dart';
 import 'package:chat_app/features/message/data/repositories/message_repo_implementation.dart';
 import 'package:chat_app/features/message/domain/usecases/fetch_message_usecase.dart';
+import 'package:chat_app/features/message/domain/usecases/upload_media_usecase.dart';
+// import 'package:chat_app/features/message/domain/usecases/upload_media_usecase.dart';
 import 'package:chat_app/features/message/presentation/bloc/message_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -62,7 +64,6 @@ class MyApp extends StatelessWidget {
     required this.contactRepository,
   });
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
@@ -80,6 +81,8 @@ class MyApp extends StatelessWidget {
               (_) => ConversationBloc(
                 fetchConversationsUsecase: FetchConversationsUsecase(
                   conversationRepository,
+                  
+
                 ),
               ),
         ),
@@ -89,14 +92,23 @@ class MyApp extends StatelessWidget {
                 fetchMessageUsecase: FetchMessageUsecase(
                   messageRepository: messageRepository,
                 ),
+                uploadMediaUsecase: UploadMediaUsecase(
+                  messageRepository: messageRepository,
+                ),
               ),
         ),
         BlocProvider(
           create:
               (_) => ContactBloc(
-                fetchContactsUsecase: FetchContactsUsecase(contactRepository: contactRepository), 
-                addContactUsecase: AddContactUsecase(contactRepository: contactRepository),
-                checkCreateConversationUsecase: CheckCreateConversationUsecase(conversationRepository: conversationRepository),
+                fetchContactsUsecase: FetchContactsUsecase(
+                  contactRepository: contactRepository,
+                ),
+                addContactUsecase: AddContactUsecase(
+                  contactRepository: contactRepository,
+                ),
+                checkCreateConversationUsecase: CheckCreateConversationUsecase(
+                  conversationRepository: conversationRepository,
+                ),
               ),
         ),
       ],

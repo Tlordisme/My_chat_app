@@ -14,4 +14,7 @@ export const ENV = {
   EMAIL_PASS: process.env.EMAIL_PASS || "grnk hrmm ukmw wgom",
   PORT: Number(process.env.PORT) || 8000,
   REDIS_URL: `redis://default:1Blaa8t3Co9pz4Hi0Mra4oTlCmJT8lns@redis-17148.c258.us-east-1-4.ec2.redns.redis-cloud.com:17148`,
+  CLOUDINARY_NAME: 'defodsokf',
+  CLOUDINARY_API_KEY: "398415277993922",
+  CLOUDINARY_API_SECRET: "J69SZeJLwMDRTm-6tZ8aub5YSPE",
 };

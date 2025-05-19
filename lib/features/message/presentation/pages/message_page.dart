@@ -1,10 +1,15 @@
+import 'dart:io';
+
 import 'package:chat_app/core/theme.dart';
+import 'package:chat_app/features/message/domain/entities/message_entity.dart';
 import 'package:chat_app/features/message/presentation/bloc/message_bloc.dart';
 import 'package:chat_app/features/message/presentation/bloc/message_event.dart';
 import 'package:chat_app/features/message/presentation/bloc/message_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:file_picker/file_picker.dart';
 
 class MessagePage extends StatefulWidget {
   final String conversationId;
@@ -21,8 +26,12 @@ class MessagePage extends StatefulWidget {
 
 class _MessagePageState extends State<MessagePage> {
   final TextEditingController _messageController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
   final _storage = FlutterSecureStorage();
   String userId = '';
+
+  //
+  // final ImagePicker _picker = ImagePicker();
 
   @override
   void initState() {
@@ -38,30 +47,17 @@ class _MessagePageState extends State<MessagePage> {
     setState(() {
       userId = storedUserId;
     });
-    BlocProvider.of<MessageBloc>(context).add(
-    LoadMessageEvent(widget.conversationId),
-  );
+    BlocProvider.of<MessageBloc>(
+      context,
+    ).add(LoadMessageEvent(widget.conversationId));
 
     print('+++++++++++++++++++=USER: $userId+++++++++++++++++++++++++++++=');
   }
-  // void fetchUserId() async {
-  //   final storedUserId = await _storage.read(key: 'userId');
-  //   print("==> STORAGE RETURNED: $storedUserId"); // in ra xem có không
-  //   if (storedUserId != null && storedUserId.isNotEmpty) {
-  //     setState(() {
-  //       userId = storedUserId;
-  //     });
-  //     BlocProvider.of<MessageBloc>(
-  //       context,
-  //     ).add(LoadMessageEvent(widget.conversationId));
-  //   } else {
-  //     print("==> userId trong storage đang rỗng hoặc chưa được lưu.");
-  //   }
-  // }
 
   @override
   void dispose() {
     _messageController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -75,6 +71,37 @@ class _MessagePageState extends State<MessagePage> {
       _messageController.clear();
     }
   }
+
+  //PickMedia
+
+  void _sendMediaMessage() async {
+    List<File> mediaMessage = [];
+    final result = await FilePicker.platform.pickFiles(
+      allowMultiple: true,
+      type: FileType.any,
+      // allowedExtensions: ['jpg', 'jpeg', 'png', 'mp4', 'mov', 'avi'],
+    );
+
+    if (result != null ) {
+      
+      for (var file in result.files) {
+        print("Đang gửi file: ${file.name}");
+
+        BlocProvider.of<MessageBloc>(context).add(
+          SendMediaMessageEvent(
+            conversationId: widget.conversationId,
+            senderId: userId,
+            content: '',
+            file: File(file.path!),
+          ),
+        );
+      }
+    } else {
+      print("No file selected.");
+    }
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -95,9 +122,9 @@ class _MessagePageState extends State<MessagePage> {
         title: Row(
           children: [
             CircleAvatar(
-              backgroundImage: NetworkImage(
-                'https://wallpapercave.com/wp/wp3262663.jpg',
-              ),
+              // backgroundImage: NetworkImage(
+              //   'https://wallpapercave.com/wp/wp3262663.jpg',
+              // ),
             ),
             SizedBox(width: 10),
             Text(
@@ -119,19 +146,45 @@ class _MessagePageState extends State<MessagePage> {
                   // return Center(child: Text("Ảo thật đấy"));
                   return Center(child: CircularProgressIndicator());
                 } else if (state is MessageLoadedState) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    _scrollController.jumpTo(
+                      _scrollController.position.maxScrollExtent,
+                    );
+                  });
+
                   return ListView.builder(
+                    controller: _scrollController,
                     padding: EdgeInsets.all(20),
                     itemCount: state.message.length,
                     itemBuilder: (context, index) {
                       final message = state.message[index];
+                      print(message);
+                      final previousMessage =
+                          index > 0 ? state.message[index - 1] : null;
+                      // final showAvatar = previousMessage?.senderId == userId;
+                      final bool showAvatar =
+                          previousMessage?.senderId != message.senderId;
                       final isSentMessage = message.senderId == userId;
                       print("senderId: ${message.senderId}, userId: $userId");
 
                       if (isSentMessage) {
                         print("senderId: ${message.senderId}, userId: $userId");
-                        return _buildSendMessage(context, message.content);
+                        return _buildSendMessage(
+                          context,
+                          message.content,
+                          message.mediaUrl ?? '',
+                          showAvatar,
+                        );
                       } else {
-                        return _buildReceivedMessage(context, message.content);
+                        print(
+                          "_____________________________-mediaUrl: ${message.mediaUrl}",
+                        );
+                        return _buildReceivedMessage(
+                          context,
+                          message.content,
+                          message.mediaUrl ?? '',
+                          showAvatar,
+                        );
                       }
                     },
                   );
@@ -148,33 +201,83 @@ class _MessagePageState extends State<MessagePage> {
     );
   }
 
-  Widget _buildReceivedMessage(BuildContext context, String message) {
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: Container(
-        margin: EdgeInsets.only(right: 30, top: 5, bottom: 5),
-        padding: EdgeInsets.all(15),
-        decoration: BoxDecoration(
-          color: DefaultColors.receiverMessage,
-          borderRadius: BorderRadius.circular(12),
+  Widget _buildReceivedMessage(
+    BuildContext context,
+    String message,
+    String mediaUrl,
+    bool showAvatar,
+  ) {
+    print("+++++++++++++++++++++++++++++++-mediaUrl: $mediaUrl");
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        showAvatar
+            ? Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: CircleAvatar(
+                radius: 16,
+                backgroundImage: NetworkImage(
+                  'https://i.pravatar.cc/150?img=3',
+                ),
+              ),
+            )
+            : SizedBox(width: 32), // giữ khoảng trống để canh lề đúng
+        SizedBox(width: 8),
+        Flexible(
+          child: Container(
+            margin: EdgeInsets.only(right: 30, top: 5, bottom: 5),
+            padding: EdgeInsets.all(15),
+            decoration: BoxDecoration(
+              color: Colors.grey[300],
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child:
+                (mediaUrl.isNotEmpty)
+                    ? Image.network(mediaUrl, width: 200, height: 200)
+                    : Text(message),
+          ),
         ),
-        child: Text(message, style: Theme.of(context).textTheme.bodyMedium),
-      ),
+      ],
     );
   }
 
-  Widget _buildSendMessage(BuildContext context, String message) {
-    return Align(
-      alignment: Alignment.centerRight,
-      child: Container(
-        margin: EdgeInsets.only(top: 5, bottom: 5),
-        padding: EdgeInsets.all(15),
-        decoration: BoxDecoration(
-          color: DefaultColors.senderMessage,
-          borderRadius: BorderRadius.circular(12),
+  Widget _buildSendMessage(
+    BuildContext context,
+    String message,
+    String mediaUrl,
+    bool showAvatar,
+  ) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Flexible(
+          child: Container(
+            margin: EdgeInsets.only(left: 30, top: 5, bottom: 5),
+            padding: EdgeInsets.all(15),
+            decoration: BoxDecoration(
+              color: Colors.blue[100],
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child:
+                (mediaUrl.isNotEmpty)
+                    ? Image.network(mediaUrl, width: 200, height: 200)
+                    : Text(message),
+          ),
         ),
-        child: Text(message, style: Theme.of(context).textTheme.bodyMedium),
-      ),
+        SizedBox(width: 8),
+        showAvatar
+            ? Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: CircleAvatar(
+                radius: 16,
+                backgroundImage: NetworkImage(
+                  'https://i.pravatar.cc/150?img=12',
+                ),
+              ),
+            )
+            : SizedBox(width: 32),
+      ],
     );
   }
 
@@ -190,7 +293,7 @@ class _MessagePageState extends State<MessagePage> {
         children: [
           GestureDetector(
             child: Icon(Icons.camera_alt, color: Colors.grey),
-            onTap: () {},
+            onTap: _sendMediaMessage,
           ),
           SizedBox(width: 10),
           Expanded(

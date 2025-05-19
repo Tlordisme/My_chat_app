@@ -38,10 +38,10 @@ io.on("connection", (socket) => {
     console.log("User joined conversation: " + conversationId);
   });
   socket.on("sendMessage", async (message) => {
-    const { conversationId, senderId, content } = message;
+    const { conversationId, senderId, content , mediaUrl, mediaType} = message;
 
     try {
-      const savedMessage = await saveMessage(conversationId, senderId, content);
+      const savedMessage = await saveMessage(conversationId, senderId, content, mediaUrl, mediaType);
       console.log("SendMessage: ");
       console.log(savedMessage);
       io.to(conversationId).emit("newMessage", savedMessage);

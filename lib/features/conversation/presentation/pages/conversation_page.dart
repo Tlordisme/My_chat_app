@@ -102,10 +102,12 @@ class _ConversationPageState extends State<ConversationPage> {
                           },
                           child: _buildMessageTile(
                             conversation.displayName,
-                            conversation.lastMessage,
-                            DateFormat(
-                              'HH:mm dd/MM',
-                            ).format(conversation.lastMessageTime!),
+                            conversation.lastMessage ?? '',
+                            conversation.lastMessageTime != null
+                                ? DateFormat(
+                                  'HH:mm dd/MM',
+                                ).format(conversation.lastMessageTime!)
+                                : '',
                           ),
                         );
                       },
@@ -138,9 +140,9 @@ class _ConversationPageState extends State<ConversationPage> {
       contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       leading: CircleAvatar(
         radius: 30,
-        backgroundImage: NetworkImage(
-          'https://wallpapercave.com/wp/wp3262663.jpg',
-        ),
+        // backgroundImage: NetworkImage(
+        //   'https://wallpapercave.com/wp/wp3262663.jpg',
+        // ),
       ),
       title: Text(
         name,
@@ -162,9 +164,9 @@ class _ConversationPageState extends State<ConversationPage> {
         children: [
           CircleAvatar(
             radius: 30,
-            backgroundImage: NetworkImage(
-              'https://wallpapercave.com/wp/wp3262663.jpg',
-            ),
+            // backgroundImage: NetworkImage(
+            //   'https://wallpapercave.com/wp/wp3262663.jpg',
+            // ),
           ),
           SizedBox(height: 5),
           Text(name, style: Theme.of(context).textTheme.bodyMedium),

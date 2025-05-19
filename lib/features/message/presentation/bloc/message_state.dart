@@ -13,3 +13,8 @@ class MessageErrorState extends MessageState {
   final String message;
   MessageErrorState(this.message);
 }
+
+class MessageUploaded extends MessageState {
+  final MessageEntity message;
+  MessageUploaded(this.message);
+}

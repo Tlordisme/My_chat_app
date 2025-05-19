@@ -7,7 +7,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ContactPage extends StatefulWidget {
   const ContactPage({super.key});
-
   @override
   State<ContactPage> createState() => _ContactPageState();
 }
@@ -28,9 +27,10 @@ class _ContactPageState extends State<ContactPage> {
         elevation: 0,
       ),
       body: BlocListener<ContactBloc, ContactState>(
-        listener: (context, state) {
+        listener: (context, state) async {
+          final contactBloc = BlocProvider.of<ContactBloc>(context);
           if (state is ConversationReady) {
-            Navigator.push(
+            var res = await Navigator.push(
               context,
               MaterialPageRoute(
                 builder:
@@ -40,6 +40,9 @@ class _ContactPageState extends State<ContactPage> {
                     ),
               ),
             );
+            if (res == null) {
+              contactBloc.add(FetchContacts());
+            }
           }
         },
         child: BlocBuilder<ContactBloc, ContactState>(

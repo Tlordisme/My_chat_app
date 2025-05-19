@@ -5,7 +5,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
 class ContactRemoteSource {
-  final String baseUrl = 'http://192.168.0.3:8000';
+  final String baseUrl = 'http://192.168.0.2:8000';
   final _storage = FlutterSecureStorage();
 
   Future<List<ContactModel>> fetchContacts() async {

@@ -5,7 +5,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
 class ConversationRemoteSource {
-  final String baseUrl = 'http://192.168.0.3:8000';
+  final String baseUrl = 'http://192.168.0.2:8000';
   final _storage = FlutterSecureStorage();
 
   Future<List<ConversationModel>> fetchConversations() async {
@@ -15,7 +15,7 @@ class ConversationRemoteSource {
       headers: {'Authorization': 'Bearer $token'},
     );
 
-    print(response.body);
+    // print(response.body);
     if (response.statusCode == 200) {
       List data = jsonDecode(response.body);
       return data.map((json) => ConversationModel.fromJson(json)).toList();
@@ -35,7 +35,7 @@ class ConversationRemoteSource {
       },
     );
 
-    print(response.body);
+    // print(response.body);
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
       return data['conversationId'];

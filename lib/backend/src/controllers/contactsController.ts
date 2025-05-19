@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import pool from "../models/db";
-import { error } from "console";
 
 export const fetchContacts = async (req: Request, res: Response): Promise<any> => {
     let userId = null;
